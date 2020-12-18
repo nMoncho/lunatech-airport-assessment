@@ -21,14 +21,14 @@ public interface CountryRepository extends JpaRepository<Country, Long> {
 
   @Query(
       value = "SELECT c.name as name, count(*) as count " +
-              "FROM countries c INNER JOIN airports a ON c.code = a.iso_country " +
+              "FROM countries c LEFT JOIN airports a ON c.code = a.iso_country " +
               "GROUP BY c.name ORDER BY count DESC LIMIT ?1",
       nativeQuery = true)
   List<ReportRow> queryTopAirports(int limit);
 
   @Query(
       value = "SELECT c.name as name, count(*) as count " +
-              "FROM countries c INNER JOIN airports a ON c.code = a.iso_country " +
+              "FROM countries c LEFT JOIN airports a ON c.code = a.iso_country " +
               "GROUP BY c.name ORDER BY count ASC LIMIT ?1",
       nativeQuery = true)
   List<ReportRow> queryBottomAirports(int limit);

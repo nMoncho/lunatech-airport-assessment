@@ -53,7 +53,7 @@ public class CountryService {
     return new CommonRunways(comm);
   }
 
-  public class SearchCountry {
+  public static class SearchCountry {
     private final Optional<Country> country;
     private final List<String> suggestions;
 

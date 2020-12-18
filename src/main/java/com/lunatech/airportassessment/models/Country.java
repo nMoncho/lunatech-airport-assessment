@@ -99,9 +99,12 @@ public class Country implements java.io.Serializable {
   @Override
   public String toString() {
     return "Country{" +
-        "id=" + id +
-        ", code='" + code + '\'' +
-        ", name='" + name + '\'' +
-        '}';
+            "id=" + id +
+            ", code='" + code + '\'' +
+            ", name='" + name + '\'' +
+            ", continent='" + continent + '\'' +
+            ", wikipedia_link='" + wikipedia_link + '\'' +
+            ", keywords='" + keywords + '\'' +
+            '}';
   }
 }
