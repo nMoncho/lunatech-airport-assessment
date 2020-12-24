@@ -69,5 +69,26 @@
     </table>
   </div>
 </div>
+<div id="runways-per-country-report">
+  <div>
+    <h2>Runways per Country</h2>
+    <table>
+      <thead>
+      <tr>
+        <th>Country</th>
+        <th>Runways</th>
+      </tr>
+      </thead>
+      <tbody>
+      <th:block th:each="entry : ${runwaysPerCountry.runwaysPerCountry}">
+        <tr>
+          <td th:text="${entry.key}"></td>
+          <td th:text="${entry.value}"></td>
+        </tr>
+      </th:block>
+      </tbody>
+    </table>
+  </div>
+</div>
 </body>
 </html>

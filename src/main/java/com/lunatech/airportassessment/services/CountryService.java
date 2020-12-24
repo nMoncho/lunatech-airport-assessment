@@ -1,16 +1,13 @@
 package com.lunatech.airportassessment.services;
 
 import com.lunatech.airportassessment.models.Country;
-import com.lunatech.airportassessment.models.reports.CommonRunways;
-import com.lunatech.airportassessment.models.reports.ReportRow;
-import com.lunatech.airportassessment.models.reports.TopBottomAirports;
+import com.lunatech.airportassessment.models.reports.*;
 import com.lunatech.airportassessment.repositories.CountryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Supplier;
 
 @Service
 public class CountryService {
@@ -26,7 +23,7 @@ public class CountryService {
     return cRepository.findByCode(code);
   }
 
-  public SearchCountry searchCountry(String name) {
+  public SearchCountry searchCountry(String name, boolean firstFuzzySuggestion) {
     SearchCountry result;
     Optional<Country> countryOpt = cRepository.findByName(name);
 
@@ -34,21 +31,53 @@ public class CountryService {
       result = new SearchCountry(countryOpt);
     } else {
       List<String> suggestions = cRepository.findByFuzzyName(name, SEARCH_LIKELINESS);
-      result = new SearchCountry(suggestions);
+      if (firstFuzzySuggestion && !suggestions.isEmpty()) {
+        result = searchCountry(suggestions.get(0), false);
+      } else {
+        result = new SearchCountry(suggestions);
+      }
     }
 
     return result;
   }
 
-  public TopBottomAirports reportTopBottomAirports() {
-    List<ReportRow> top = cRepository.queryTopAirports(REPORT_TOP_BOTTOM_LIMIT);
-    List<ReportRow> bottom = cRepository.queryBottomAirports(REPORT_TOP_BOTTOM_LIMIT);
+  public TopBottomAirports reportTopBottomAirports(Optional<Integer> limitOpt) {
+    int limit = limitOpt.orElse(REPORT_TOP_BOTTOM_LIMIT);
+    List<ReportRow> top = cRepository.queryTopAirports(limit);
+    List<ReportRow> bottom = cRepository.queryBottomAirports(limit);
 
     return new TopBottomAirports(top, bottom);
   }
 
-  public CommonRunways reportCommonRunways() {
-    List<ReportRow> comm = cRepository.queryCommonRunways(REPORT_COMMON_LIMIT);
+  public List<ReportRow> reportTopAirports(Optional<Integer> limitOpt) {
+    return cRepository.queryTopAirports(limitOpt.orElse(REPORT_TOP_BOTTOM_LIMIT));
+  }
+
+  public List<ReportRow> reportBottomAirports(Optional<Integer> limitOpt) {
+    return cRepository.queryBottomAirports(limitOpt.orElse(REPORT_TOP_BOTTOM_LIMIT));
+  }
+
+  public RunwayPerCountry reportRunwaysPerCountry() {
+    Map<String, List<String>> aggregate = cRepository.queryRunwaysPerCountry().stream().collect(
+      (Supplier<TreeMap<String, List<String>>>) TreeMap::new,
+      (map, row) -> {
+        final List<String> current;
+        if (map.containsKey(row.getName())) {
+          current = map.get(row.getName());
+        } else {
+          current = new LinkedList<>();
+        }
+
+        current.add(row.getSurface());
+        map.put(row.getName(), current);
+      },
+      TreeMap::putAll);
+
+    return new RunwayPerCountry(aggregate);
+  }
+
+  public CommonRunways reportCommonRunways(Optional<Integer> limitOpt) {
+    List<ReportRow> comm = cRepository.queryCommonRunways(limitOpt.orElse(REPORT_TOP_BOTTOM_LIMIT));
 
     return new CommonRunways(comm);
   }

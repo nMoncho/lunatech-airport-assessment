@@ -1,0 +1,50 @@
+version: '2.1'
+
+services:
+  airport-api:
+    image: airport-assessment:0.0.1-SNAPSHOT
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - DS_URL=jdbc:postgresql://postgres:5432/lunatech_airport
+      - DS_USER=postgres
+      - DS_PASS=postgres
+
+  postgres:
+    image: postgres:13
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=lunatech_airport
+    ports:
+      - "5432:5432"
+    networks:
+      - default
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging:
+      driver: none
+
+  postgres-init:
+    image: postgres:13
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - PGPASSWORD=postgres
+    volumes:
+      - ./src/main/resources/static/schema.sql:/schema.sql
+      - ./src/main/resources/static/airports.csv:/airports.csv
+      - ./src/main/resources/static/countries.csv:/countries.csv
+      - ./src/main/resources/static/runways.csv:/runways.csv
+    command: bash -c "echo 'Initializing schema/data...' && sleep 10 &&
+      psql --host=postgres --username=postgres -w -d lunatech_airport -f ./schema.sql &&
+      psql --host=postgres --username=postgres -w -d lunatech_airport -c \"\copy countries(id, code, name, continent, wikipedia_link, keywords) FROM 'countries.csv' DELIMITER ',' CSV HEADER\" &&
+      psql --host=postgres --username=postgres -w -d lunatech_airport -c \"\copy airports(id, ident, type, name, latitude_deg, longitude_deg, elevation_ft, continent, iso_country, iso_region, municipality, scheduled_service, gps_code, iata_code, local_code, home_link, wikipedia_link, keywords) FROM 'airports.csv' DELIMITER ',' CSV HEADER\" &&
+      psql --host=postgres --username=postgres -w -d lunatech_airport -c \"\copy runways(id, airport_ref, airport_ident, length_ft, width_ft, surface, lighted, closed, le_ident, le_latitude_deg, le_longitude_deg, le_elevation_ft, le_heading_degT, le_displaced_threshold_ft, he_ident, he_latitude_deg, he_longitude_deg, he_elevation_ft, he_heading_degT, he_displaced_threshold_ft) FROM 'runways.csv' DELIMITER ',' CSV HEADER\""

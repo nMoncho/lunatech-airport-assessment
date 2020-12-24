@@ -1,5 +1,7 @@
 CREATE DATABASE lunatech_airport;
 
+CREATE EXTENSION fuzzystrmatch;
+
 CREATE TABLE IF NOT EXISTS countries (
   id              INTEGER CONSTRAINT PK_COUNTRIES PRIMARY KEY,
   code            VARCHAR(10) NOT NULL,
