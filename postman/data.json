@@ -1,0 +1,97 @@
+[
+  {
+    "countries": {
+      "code": "AR",
+      "name": "Argentina",
+      "fuzzyName": "Argantina",
+      "responseCode": 200
+    },
+    "top-airports": {
+      "limit": 1,
+      "responseCode": 200,
+      "expected": ["United States"]
+    },
+    "bottom-airports": {
+      "limit": 1,
+      "responseCode": 200,
+      "expected": ["South Georgia and the South Sandwich Islands"]
+    },
+    "common-runways": {
+      "limit": 1,
+      "responseCode": 200,
+      "expected": ["H1"]
+    }
+  },
+  {
+    "countries": {
+      "code": "BR",
+      "name": "Brazil",
+      "fuzzyName": "Brasil",
+      "responseCode": 200
+    },
+    "top-airports": {
+      "limit": 3,
+      "responseCode": 200,
+      "expected": ["United States", "Brazil", "Canada"]
+    },
+    "bottom-airports": {
+      "limit": 3,
+      "responseCode": 200,
+      "expected": ["South Georgia and the South Sandwich Islands", "Pitcairn", "Tokelau"]
+    },
+    "common-runways": {
+      "limit": 3,
+      "responseCode": 200,
+      "expected": ["H1", "18", "09"]
+    }
+  },
+  {
+    "countries": {
+      "code": "CO",
+      "name": "Colombia",
+      "fuzzyName": "Colombie",
+      "responseCode": 200
+    },
+    "top-airports": {
+      "limit": 10,
+      "responseCode": 200,
+      "expected": ["United States", "Brazil", "Canada", "Australia", "Russia", "France", "Argentina", "Germany", "Colombia", "Venezuela"]
+    },
+    "bottom-airports": {
+      "limit": 10,
+      "responseCode": 200,
+      "expected": ["South Georgia and the South Sandwich Islands", "Pitcairn", "Tokelau", "Norfolk Island", "Mayotte", "Saint Barthélemy", "Martinique", "Unknown or unassigned country", "Saint Helena", "Macau"]
+    },
+    "common-runways": {
+      "limit": 10,
+      "responseCode": 200,
+      "expected": ["H1", "18", "09", "17", "16", "12", "14", "08", "13", "15"]
+    }
+  },
+  {
+    "countries": {
+      "code": "XX",
+      "name": "Not found",
+      "fuzzyName": "Not found",
+      "responseCode": 404
+    },
+    "top-airports": {
+      "limit": -1,
+      "responseCode": 500,
+      "expected": []
+    },
+    "bottom-airports": {
+      "limit": -1,
+      "responseCode": 500,
+      "expected": []
+    },
+    "common-runways": {
+      "limit": -1,
+      "responseCode": 500,
+      "expected": []
+    },
+    "runways": {
+      "responseCode": 200
+    }
+  }
+]
